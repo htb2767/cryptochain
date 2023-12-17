@@ -1,5 +1,6 @@
 const express =require('express');
 const request=require('request');
+const path=require('path');
 const bodyParser=require('body-parser');
 const Blockchain=require('./blockchain/index');
 const PubSub=require('./app/pubsub');
@@ -16,6 +17,7 @@ const transactionMiner= new TransactionMiner({blockchain,transactionPool,wallet,
 const DEFAULT_PORT=3000;
 const ROOT_NODE_ADDRESS=`http://localhost:${DEFAULT_PORT}`;
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname,'client/dist')));
 app.get('/api/blocks',(req,res)=>{
     res.json(blockchain.chain);
 });
@@ -59,7 +61,10 @@ app.get('/api/wallet-info',(req,res)=>{
         address:address,
         balance: Wallet.calculateBalance({chain:blockchain.chain,address:address})
     });
-})
+});
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'client/dist/index.html'));
+});
 const syncWithRootState=()=>{
     request({url:`${ROOT_NODE_ADDRESS}/api/blocks`},(error,response,body)=>{
         if(!error&&response.statusCode===200){
