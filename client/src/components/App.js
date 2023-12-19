@@ -1,7 +1,7 @@
 import { json } from 'body-parser';
 import logo from '../assets/logo.png';
 import React, {Component} from 'react';
-import Blocks from './Blocks';
+import {Link} from 'react-router-dom';
 class App extends Component{
     state={walletInfo:{}};
     componentDidMount(){
@@ -17,13 +17,13 @@ class App extends Component{
                 <br />
                 <div>Welcome to blockchain...</div>
                 <br />
+                <div><Link to='/blocks'>Blocks</Link></div>
                 
                 <div className='WalletInfo'>
                 <div>Address: {address}</div>
                 <div>Balance: {balance}</div>
                 </div>
-                <br/>
-                <Blocks/>
+              
             </div>
         )
     }

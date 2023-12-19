@@ -31,5 +31,9 @@ body {
   .Transaction{
     padding: 5%;
   }
+  a, a:hover{
+    color:#e66;
+    text-decoration: underline;
+  }
 
 /*# sourceMappingURL=/src.e31bb0bc.css.map */
