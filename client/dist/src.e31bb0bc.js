@@ -57740,7 +57740,7 @@ var App = /*#__PURE__*/function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this2 = this;
-      fetch('http://localhost:3000/api/wallet-info').then(function (response) {
+      fetch("".concat(document.location.origin, "/api/wallet-info")).then(function (response) {
         return response.json();
       }).then(function (json) {
         return _this2.setState({
@@ -72945,7 +72945,7 @@ var Blocks = /*#__PURE__*/function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this2 = this;
-      fetch('http://localhost:3000/api/blocks').then(function (response) {
+      fetch("".concat(document.location.origin, "/api/blocks")).then(function (response) {
         return response.json();
       }).then(function (json) {
         return _this2.setState({
@@ -73026,7 +73026,7 @@ var ConductTransaction = /*#__PURE__*/function (_Component) {
       var _this$state = _this.state,
         recipient = _this$state.recipient,
         amount = _this$state.amount;
-      fetch('http://localhost:3000/api/transact', {
+      fetch("".concat(document.location.origin, "/api/transact"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -73080,6 +73080,8 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _reactRouterDom = require("react-router-dom");
 var _Transaction = _interopRequireDefault(require("./Transaction"));
+var _reactBootstrap = require("react-bootstrap");
+var _history = _interopRequireDefault(require("../history"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -73097,6 +73099,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var POLL_INTERVAL_MS = 10000;
 var TransactionPool = /*#__PURE__*/function (_Component) {
   _inherits(TransactionPool, _Component);
   var _super = _createSuper(TransactionPool);
@@ -73111,7 +73114,7 @@ var TransactionPool = /*#__PURE__*/function (_Component) {
       transactionPoolMap: {}
     });
     _defineProperty(_assertThisInitialized(_this), "fetchTransactionPoolMap", function () {
-      fetch('http://localhost:3000/api/transaction-pool-map').then(function (response) {
+      fetch("".concat(document.location.origin, "/api/transaction-pool-map")).then(function (response) {
         return response.json();
       }).then(function (json) {
         return _this.setState({
@@ -73119,12 +73122,31 @@ var TransactionPool = /*#__PURE__*/function (_Component) {
         });
       });
     });
+    _defineProperty(_assertThisInitialized(_this), "fetchMineTransaction", function () {
+      fetch("".concat(document.location.origin, "/api/mine-transactions")).then(function (response) {
+        if (response.status === 200) {
+          alert('success');
+          _history.default.push('/blocks');
+        } else {
+          alert('the mine transaction block request did not complete');
+        }
+      });
+    });
     return _this;
   }
   _createClass(TransactionPool, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this2 = this;
       this.fetchTransactionPoolMap();
+      this.fetchPoolMapInterval = setInterval(function () {
+        return _this2.fetchTransactionPoolMap();
+      }, POLL_INTERVAL_MS);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      clearInterval(this.fetchPoolMapInterval);
     }
   }, {
     key: "render",
@@ -73139,13 +73161,16 @@ var TransactionPool = /*#__PURE__*/function (_Component) {
         }, /*#__PURE__*/_react.default.createElement("hr", null), /*#__PURE__*/_react.default.createElement(_Transaction.default, {
           transaction: transaction
         }));
-      }));
+      }), /*#__PURE__*/_react.default.createElement("hr", null), /*#__PURE__*/_react.default.createElement(_reactBootstrap.Button, {
+        bsStyle: "danger",
+        onClick: this.fetchMineTransaction
+      }, "Mine the Transaction"));
     }
   }]);
   return TransactionPool;
 }(_react.Component);
 var _default = exports.default = TransactionPool;
-},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/es/index.js","./Transaction":"components/Transaction.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","react-router-dom":"../../node_modules/react-router-dom/es/index.js","./Transaction":"components/Transaction.js","react-bootstrap":"../../node_modules/react-bootstrap/es/index.js","../history":"history.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
